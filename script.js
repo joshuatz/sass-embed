@@ -141,19 +141,23 @@ function loadFromQueryString(){
     var sassQueryVal = getUrlParameter('sassString',window.location.search);
     var indentendInputStr = getUrlParameter('indented',window.location.search);
     var autoRunOnStr = getUrlParameter('autorun',window.location.search);
+    var inputReadOnlyStr = getUrlParameter('readonly',window.location.search);
     if (!sassQueryVal && CAN_TOUCH_PARENT){
         sassQueryVal = getUrlParameter('sassString',parent.window.location.search);
         indentendInputStr = getUrlParameter('indented',window.location.search);
         autoRunOnStr = getUrlParameter('autorun',window.location.search);
+        inputReadOnlyStr = getUrlParameter('readonly',window.location.search);
     }
     // Default to indentend input = false
     // Default to autorun = false;
+    // Default to readonly = false
     var indentedInputBool = (indentendInputStr && indentendInputStr.toLowerCase()==='true');
     var autoRunOnBool = (autoRunOnStr && autoRunOnStr.toLowerCase()==='true');
+    var inputReadOnlyBool = (inputReadOnlyStr && inputReadOnlyStr.toLowerCase()==='true');
     indentCheckbox.checked = indentedInputBool;
     AUTORUN_ON = autoRunOnBool;
+    toggleInputReadOnly(inputReadOnlyBool);
     if (sassQueryVal){
-        var sassString = sassQueryVal;
         parseSassAndShow(sassQueryVal, indentedInputBool, true);
         return true;
     }
@@ -233,6 +237,16 @@ function toggleCompileStatus(status){
         setTimeout(function(){
             compilingStatusElem.style.display = 'none';
         },1000);
+    }
+}
+function toggleInputReadOnly(readOnly){
+    if (readOnly){
+        inputFlask.enableReadonlyMode();
+        topBarElem.style.display = 'none';
+    }
+    else {
+        inputFlask.disableReadonlyMode();
+        topBarElem.style.display = 'inherit';
     }
 }
 /**
