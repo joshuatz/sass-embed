@@ -32,10 +32,11 @@ var topBarElem = document.querySelector('#topbar');
 var autorunCheckbox = document.querySelector('#autorunCheckbox');
 var compilingStatusElem = document.querySelector('#compilingStatus');
 var AUTORUN_ON = false;
-var DEBOUNCE_COUNTER = 0;
 var DEBOUNCE_TIMER = null;
-var DEBOUNCE_WAIT_MS = 1000*3;
+var DEBOUNCE_WAIT_MS = 1000*2;
 var LAST_INPUT_MS = 0;
+// Global - can touch parent window (or not due to Cross-Origin)
+var CAN_TOUCH_PARENT = false;
 
 // Copy theme details over if not using default theme
 if (!CODEFLASK_USE_DEF_THEME){
@@ -76,10 +77,6 @@ Sass.options({
     style: Sass.style.expanded
 });
 
-// Global - can touch parent window (or not due to Cross-Origin)
-canTouchParent = false;
-
-
 /**
  * Add event listeners and auto-run
  */
@@ -88,7 +85,7 @@ if (self !== top){
     try {
         parent.window.addEventListener('message',postMessageReceiver);
         removeHeader();
-        canTouchParent = true;
+        CAN_TOUCH_PARENT = true;
     }
     catch (e){
         console.group('Unable to attach listener to parent window');
@@ -113,7 +110,10 @@ inputFlask.onUpdate(function(code){
         }
     },DEBOUNCE_WAIT_MS);
 });
-loadFromQueryString();
+// Load from query string first, then if abset, look for inline
+if (!loadFromQueryString()){
+    loadFromInlineTag();
+}
 
 function inputToOutput(){
     var inputSass = sassInputElem.value;
@@ -141,7 +141,7 @@ function loadFromQueryString(){
     var sassQueryVal = getUrlParameter('sassString',window.location.search);
     var indentendInputStr = getUrlParameter('indented',window.location.search);
     var autoRunOnStr = getUrlParameter('autorun',window.location.search);
-    if (!sassQueryVal && canTouchParent){
+    if (!sassQueryVal && CAN_TOUCH_PARENT){
         sassQueryVal = getUrlParameter('sassString',parent.window.location.search);
         indentendInputStr = getUrlParameter('indented',window.location.search);
         autoRunOnStr = getUrlParameter('autorun',window.location.search);
@@ -155,7 +155,21 @@ function loadFromQueryString(){
     if (sassQueryVal){
         var sassString = sassQueryVal;
         parseSassAndShow(sassQueryVal, indentedInputBool, true);
+        return true;
     }
+    return false;
+}
+
+function loadFromInlineTag(){
+    var indentedTag = document.querySelector('pre[class*="language-sass"][class*="input"]');
+    var regularTag = document.querySelector('pre[class*="language-scss"][class*="input"]');
+    var finalTag = indentedTag ? indentedTag : regularTag;
+    if (finalTag){
+        var code = finalTag.innerText;
+        parseSassAndShow(code, Boolean(indentedTag), true);
+        return true;
+    }
+    return false;
 }
 
 function parseSassAndShow(sassString, indentedSyntax, updateInput){
@@ -218,11 +232,11 @@ function toggleCompileStatus(status){
         compilingStatusElem.style.opacity = 0;
         setTimeout(function(){
             compilingStatusElem.style.display = 'none';
-        },1500);
+        },1000);
     }
 }
 /**
  * Todo
  *  - Build embed gen tool
- * 
+ *  - Readonly mode for input
  */
