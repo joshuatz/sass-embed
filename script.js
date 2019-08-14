@@ -1,5 +1,5 @@
 
-// CODEFLASK_USE_DEF_THEME = true;
+SCRIPT_JS_LOADED = true;
 CODEFLASK_USE_DEF_THEME = false;
 
 // Setup code editor
@@ -14,6 +14,13 @@ outputFlask = new CodeFlask('#css-output', {
     lineNumbers: false,
     readonly: true,
     defaultTheme: CODEFLASK_USE_DEF_THEME
+});
+
+// Setup split js
+Split(['#sass-input-wrapper','#css-output-wrapper'],{
+    sizes: [50,50],
+    direction: 'horizontal',
+    gutterSize: 10
 });
 
 // common elements & globals
@@ -133,13 +140,18 @@ function postMessageReceiver(msgEvent){
 function loadFromQueryString(){
     var sassQueryVal = getUrlParameter('sassString',window.location.search);
     var indentendInputStr = getUrlParameter('indented',window.location.search);
+    var autoRunOnStr = getUrlParameter('autorun',window.location.search);
     if (!sassQueryVal && canTouchParent){
         sassQueryVal = getUrlParameter('sassString',parent.window.location.search);
         indentendInputStr = getUrlParameter('indented',window.location.search);
+        autoRunOnStr = getUrlParameter('autorun',window.location.search);
     }
     // Default to indentend input = false
+    // Default to autorun = false;
     var indentedInputBool = (indentendInputStr && indentendInputStr.toLowerCase()==='true');
+    var autoRunOnBool = (autoRunOnStr && autoRunOnStr.toLowerCase()==='true');
     indentCheckbox.checked = indentedInputBool;
+    AUTORUN_ON = autoRunOnBool;
     if (sassQueryVal){
         var sassString = sassQueryVal;
         parseSassAndShow(sassQueryVal, indentedInputBool, true);
@@ -186,12 +198,6 @@ function showOutputCss(cssString){
 
 function getUrlParameter(e, searchStr){e=e.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]");var r=new RegExp("[\\?&]"+e+"=([^&#]*)").exec(searchStr);return null===r?"":decodeURIComponent(r[1].replace(/\+/g," "))}
 
-Split(['#sass-input-wrapper','#css-output-wrapper'],{
-    sizes: [50,50],
-    direction: 'horizontal',
-    gutterSize: 10
-});
-
 function removeHeader(){
     parent.document.querySelector('header').remove();
     var injectedStyleText = '#tabs,#tabs #result{margin-top:0;height:100vh}';
@@ -217,7 +223,6 @@ function toggleCompileStatus(status){
 }
 /**
  * Todo
- *  - Spruce up topbar
  *  - Build embed gen tool
  * 
  */
