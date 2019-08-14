@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/sass.js/0.11.0/sass.min.js" integrity="sha256-1MTlXahXbxCpbv9RxO9Qx96oBa3f1cEXH0GU4AS+TU0=" crossorigin="anonymous"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/sass.js/0.11.0/sass.worker.min.js" integrity="sha256-/cLZsYqqMuaGwzQS5HNJHjoGVZCYUkywHQo0ZbVEBt0=" crossorigin="anonymous"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.5.11/split.min.js" integrity="sha256-9u7Hr7DXDRNHVZ/p9uoV5oIHL9Ql7Qx3dKPJzeRakII=" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/CodeFlask.js/1.4.1/codeflask.min.js" integrity="sha256-G969tEzJXrGgPCQjr06NYkQhnHVWDW1lITsA6OhINqU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.16.0/components/prism-scss.min.js" integrity="sha256-e8D5SrALfYOcy2NqfpblBaRTuTlrmQUP6RUOYtQ+7cg=" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sass.js/0.11.0/sass.sync.min.js" integrity="sha256-fRTlFt0oTb9cQ26hylSirmI2ovPArP9ON+V1mVnb1DM=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.16.0/themes/prism-okaidia.min.css" integrity="sha256-Ykz0nNWK7w4QWJUYR7OraN4773aMB/11aMt1nZyrhuQ=" crossorigin="anonymous" />
+
+
+    
+    <link rel="stylesheet" href="style.css?v=5" />
+</head>
+
+<body>
+    <div id="topbar">
+        <button id="convertButton">Convert</button>
+        <label>
+            <input type="checkbox" class="filled-in" id="indentCheckbox" />
+            <span>Indented SASS?</span>
+        </label>
+        <label>
+            <input type="checkbox" class="filled-in" id="autorunCheckbox" />
+            <span>Autorun:</span>
+        </label>
+        <div id="compilingStatus">Compililng...</div>
+    </div>
+    <!-- <div id="panelIndicatorsBar">
+        <div class="input"><div class="indicatorText">Input SASS:</div></div>
+        <div class="output"><div class="indicatorText">Output CSS</div></div>
+    </div> -->
+    <div class="container">
+        <div id="sass-input-wrapper">
+            <div class="indicatorBar input">
+                <div class="indicatorText">Input SASS</div>
+            </div>
+            <!--<textarea id="sass-input" autocomplete="off" spellcheck="off">
+.myWrapper {
+    .myElement {
+        background-color: red;
+    }
+}</textarea>-->
+            <div id="sass-input"></div>
+        </div>
+        <div id="css-output-wrapper">
+            <div class="indicatorBar input">
+                <div class="indicatorText">Output CSS</div>
+            </div>
+            <!-- <pre id="css-output"></pre> -->
+            <div id="css-output"></div>
+        </div>
+    </div>
+    <script src="script.js?v=5"></script>
+</body>
+
+</html>
