@@ -249,8 +249,3 @@ function toggleInputReadOnly(readOnly){
         topBarElem.style.display = 'inherit';
     }
 }
-/**
- * Todo
- *  - Build embed gen tool
- *  - Readonly mode for input
- */

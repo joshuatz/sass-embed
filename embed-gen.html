@@ -6,12 +6,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Embed Gen</title>
+    <!-- Code Flask, Language, and Theme -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/CodeFlask.js/1.4.1/codeflask.min.js" integrity="sha256-G969tEzJXrGgPCQjr06NYkQhnHVWDW1lITsA6OhINqU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.16.0/components/prism-scss.min.js" integrity="sha256-e8D5SrALfYOcy2NqfpblBaRTuTlrmQUP6RUOYtQ+7cg=" crossorigin="anonymous"></script>
+    <!-- Materialize -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" integrity="sha256-OweaP/Ic6rsV+lysfyS4h+LM6sRwuO3euTYfr6M124g=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" integrity="sha256-U/cHDMTIHCeMcvehBv1xQ052bPSbJtbuiw4QA9cTKz0=" crossorigin="anonymous"></script>
+<style>
+#sass-input {
+    position: relative;
+    height: 300px;
+    margin: 10px;
+    border: 1px solid black;
+}
+</style>
 </head>
 
 <body>
-    <form>
-        
-    </form>
+    <div class="row">
+        <form id="formWrapper" class="col s6">
+            <div class="row">
+                <div class="input-field col s11">
+                    <input placeholder="example.com/sass-embed/" id="embedUrl" type="url" class="validate">
+                    <label for="embedUrl">Embed URL</label>
+                </div>
+                <p class="col s6">
+                    <label>
+                        <input type="checkbox" id="indented"/>
+                        <span>Indented</span>
+                    </label>
+                </p>
+                <p class="col s6">
+                    <label>
+                        <input type="checkbox" id="readonly" />
+                        <span>Read-Only Mode</span>
+                    </label>
+                </p>
+                <p class="col s6">
+                    <label>
+                        <input type="checkbox" id="autorun" />
+                        <span>Autorun on input</span>
+                    </label>
+                </p>
+            </div>
+            <div id="sassInputWrapper" class="row">
+                <div class="center">Sass Input</div>
+                <div id="sass-input"></div>
+            </div>
+            <div class="row center">
+                <button class="btn" type="submit">Generate</button>
+            </div>
+        </form>
+
+        <div id="outputWrapper" class="col s6">
+            <div class="row">
+                <div class="input-field col s12">
+                    <label for="output">Generated URL:</label>
+                    <textarea id="output" class="" readonly>Generated URL will appear here...</textarea>
+                </div>
+                <div class="col s12 outputLinkWrapper">
+                    Test URL: <a href="#" target="_blank" id="outputLink">Link</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    M.AutoInit();
+    inputFlask = new CodeFlask('#sass-input', {
+        language: 'scss',
+        lineNumbers: true,
+        readonly: false
+    });
+    document.getElementById('formWrapper').addEventListener('submit',function(evt){
+        evt.preventDefault();
+        generateOutput();
+    });
+    document.querySelectorAll('form input, form textarea').forEach(function(elem){
+        elem.addEventListener('change',generateOutput);
+        elem.addEventListener('keyup',generateOutput);
+    });
+
+    function generateOutput(){
+        var outputArea = document.querySelector('#output');
+        var outputLink = document.querySelector('#outputLink');
+        var embedUrl = document.querySelector('#embedUrl').value;
+        var indented = document.querySelector('#indented').checked;
+        var readonly = document.querySelector('#readonly').checked;
+        var autorun = document.querySelector('#autorun').checked;
+        var sassString = inputFlask.getCode();
+        var finalUrl = '#';
+        var booleanMaps = {
+            'autorun': autorun,
+            'readonly': readonly,
+            'indented': indented
+        }
+        if (embedUrl){
+            var queryString = '';
+            if (sassString && sassString.length > 0){
+                queryString = 'sassString=' + encodeURIComponent(sassString);
+            }
+            for (var key in booleanMaps){
+                if (booleanMaps[key]===true){
+                    queryString += (queryString.length > 0 ? '&' : '') + key + '=' + booleanMaps[key].toString();
+                }
+            }
+            finalUrl = embedUrl + '?' + queryString;
+            outputArea.value = finalUrl;
+            outputLink.href = finalUrl;
+        }
+        else {
+            outputArea.value = 'Generated URL will appear here...';
+            outputLink.href = '#';
+            alert('Please enter a valid embed URL');
+        }
+    }
+</script>
 </body>
 
 </html>

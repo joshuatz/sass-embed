@@ -1,3 +1,6 @@
+# Sass-Embed
+
+
 ## Different ways to load in SASS
 You can load in SASS in several different ways. The list below is in order of precedence, so inputs higher up will override those lower down
  - postMessage
@@ -13,7 +16,7 @@ You can load in SASS in several different ways. The list below is in order of pr
     </pre>
     ```
 
-## Options and Loading
+## Configuration Parameters
 Query Key | postMessage Key | Description
 --- | --- | --- | ---
 `autorun` | NA | *Option*: If SASS should be continuously converted as user types in SASS input area.<br><br>Use "true" or "false" string for query key.
