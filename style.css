@@ -11,10 +11,10 @@
     text-align: center;
 }
 .indicatorBar.input {
-    background-color: green;
+    background-color: #63B8EE;
 }
 .indicatorBar.output {
-    background-color: red;
+    background-color: #a6e22e;
 }
 .indicatorBar .indicatorText {
     padding: 5px;

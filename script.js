@@ -96,6 +96,9 @@ if (self !== top){
 convertButton.addEventListener('click',function(evt){
     inputToOutput();
 });
+indentCheckbox.addEventListener('change',function(evt){
+    inputToOutput();
+});
 autorunCheckbox.addEventListener('click',function(evt){
     toggleAutoRun(autorunCheckbox.checked);
 });
@@ -142,22 +145,23 @@ function loadFromQueryString(){
     var indentendInputStr = getUrlParameter('indented',window.location.search);
     var autoRunOnStr = getUrlParameter('autorun',window.location.search);
     var inputReadOnlyStr = getUrlParameter('readonly',window.location.search);
-    if (!sassQueryVal && CAN_TOUCH_PARENT){
-        sassQueryVal = getUrlParameter('sassString',parent.window.location.search);
-        indentendInputStr = getUrlParameter('indented',window.location.search);
-        autoRunOnStr = getUrlParameter('autorun',window.location.search);
-        inputReadOnlyStr = getUrlParameter('readonly',window.location.search);
+    if (CAN_TOUCH_PARENT){
+        // Only try to get parent if not already set
+        sassQueryVal = hasStrLen(sassQueryVal) ? sassQueryVal : getUrlParameter('sassString',parent.window.location.search);
+        indentendInputStr = hasStrLen(indentendInputStr) ? indentendInputStr : getUrlParameter('indented',parent.window.location.search);
+        autoRunOnStr = hasStrLen(autoRunOnStr) ? autoRunOnStr : getUrlParameter('autorun',parent.window.location.search);
+        inputReadOnlyStr = hasStrLen(inputReadOnlyStr) ? inputReadOnlyStr : getUrlParameter('readonly',parent.window.location.search);
     }
     // Default to indentend input = false
     // Default to autorun = false;
     // Default to readonly = false
-    var indentedInputBool = (indentendInputStr && indentendInputStr.toLowerCase()==='true');
-    var autoRunOnBool = (autoRunOnStr && autoRunOnStr.toLowerCase()==='true');
-    var inputReadOnlyBool = (inputReadOnlyStr && inputReadOnlyStr.toLowerCase()==='true');
+    var indentedInputBool = (strToBool(indentendInputStr));
+    var autoRunOnBool = (strToBool(autoRunOnStr));
+    var inputReadOnlyBool = (strToBool(inputReadOnlyStr));
     indentCheckbox.checked = indentedInputBool;
-    AUTORUN_ON = autoRunOnBool;
+    toggleAutoRun(autoRunOnBool);
     toggleInputReadOnly(inputReadOnlyBool);
-    if (sassQueryVal){
+    if (hasStrLen(sassQueryVal)){
         parseSassAndShow(sassQueryVal, indentedInputBool, true);
         return true;
     }
@@ -229,6 +233,7 @@ function removeHeader(){
 
 function toggleAutoRun(setAutorunOn){
     AUTORUN_ON = setAutorunOn;
+    autorunCheckbox.checked = setAutorunOn;
 }
 function toggleCompileStatus(status){
     if (status){
@@ -251,4 +256,17 @@ function toggleInputReadOnly(readOnly){
         inputFlask.disableReadonlyMode();
         topBarElem.style.display = 'inherit';
     }
+}
+
+function isStr(input){
+    return typeof(input)==='string';
+}
+function hasStrLen(input){
+    return isStr(input) && input.length > 0;
+}
+function strToBool(input){
+    if (hasStrLen(input)){
+        return input.toLowerCase() === 'true';
+    }
+    return false;
 }

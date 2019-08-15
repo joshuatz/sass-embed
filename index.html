@@ -65,19 +65,37 @@
         </div>
     </div>
     <script>
-        // Load script.js if not inline
-        if (self === top || typeof(SCRIPT_JS_LOADED)==='undefined'){
-            var sE = document.createElement('script');
-            sE.src = 'script.js?stamp=' + (new Date()).getTime();
-            document.body.appendChild(sE);
-        }
+        (function(){
+            // Load script.js if not inline
+            function loadScript(){
+                var sE = document.createElement('script');
+                sE.src = 'script.js?stamp=' + (new Date()).getTime();
+                document.body.appendChild(sE);
+            }
+            if (self === top){
+                loadScript();
+            }
+            else if (typeof(SCRIPT_JS_LOADED)==='undefined'){
+                if (document.readyState==="complete"){
+                    handleLoad();
+                }
+                else {
+                    window.addEventListener('load',handleLoad);
+                }
+            }
+            function handleLoad(){
+                if (typeof(SCRIPT_JS_LOADED)==='undefined'){
+                    loadScript();
+                }
+            }
+        })();
     </script>
     <pre class="language-scss input" style="display:none;">
-    body {
-        div {
-            background-color: green;
-        }
+body {
+    div {
+        background-color: green;
     }
+}
     </pre>
 </body>
 
