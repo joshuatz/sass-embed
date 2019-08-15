@@ -17,8 +17,19 @@
     <!-- Sass.js for actual conversion -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sass.js/0.11.0/sass.sync.min.js" integrity="sha256-fRTlFt0oTb9cQ26hylSirmI2ovPArP9ON+V1mVnb1DM=" crossorigin="anonymous"></script>
     <script>
+        var foundInlineStyle = false;
         // Load stylesheet if not inline
-        if (self === top){
+        if (self !== top){
+            // Scan for inline
+            var inlineStyles = document.querySelectorAll('style');
+            for (var x=0; x<inlineStyles.length; x++){
+                if (/#inlineCssDetectionRule/.test(inlineStyles[x].innerText)){
+                    foundInlineStyle = true;
+                    break;
+                }
+            }
+        }
+        if (!foundInlineStyle){
             var linkE = document.createElement('link');
             linkE.rel = 'stylesheet';
             linkE.href = 'style.css?stamp=' + (new Date()).getTime();

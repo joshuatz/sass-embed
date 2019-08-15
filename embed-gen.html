@@ -19,6 +19,12 @@
     margin: 10px;
     border: 1px solid black;
 }
+.title {
+    font-size: 1.5rem;
+}
+#outputWrapper textarea {
+    min-height: 100px;
+}
 </style>
 </head>
 
@@ -60,18 +66,33 @@
 
         <div id="outputWrapper" class="col s6">
             <div class="row">
+                <!-- URL only -->
                 <div class="input-field col s12">
-                    <label for="output">Generated URL:</label>
+                    <div class="center title">Generated URL:</div>
                     <textarea id="output" class="" readonly>Generated URL will appear here...</textarea>
                 </div>
                 <div class="col s12 outputLinkWrapper">
                     Test URL: <a href="#" target="_blank" id="outputLink">Link</a>
+                </div>
+                <!-- Iframe -->
+                <div class="input-field col s12">
+                    <div class="center title">Iframe:</div>
+                    <textarea id="iframeOnly" class="" readonly>Generated code will appear here...</textarea>
+                </div>
+                <!-- Iframe + postMessage -->
+                <div class="input-field col s12">
+                    <div class="center title">Iframe + postMessage:</div>
+                    <textarea id="iframePlusPostMess" class="" readonly>Generated code will appear here...</textarea>
                 </div>
             </div>
         </div>
     </div>
 
 <script>
+    var embedUrlField = document.querySelector('#embedUrl');
+    var indentedChBox = document.querySelector('#indented');
+    var readonlyChBox = document.querySelector('#readonly');
+    var autorunChBox = document.querySelector('#autorun');
     M.AutoInit();
     inputFlask = new CodeFlask('#sass-input', {
         language: 'scss',
@@ -86,40 +107,119 @@
         elem.addEventListener('change',generateOutput);
         elem.addEventListener('keyup',generateOutput);
     });
+    document.querySelectorAll('#outputWrapper textarea').forEach(function(elem){
+        elem.addEventListener('click',function(evt){
+            evt.target.select();
+        });
+    });
+    restoreFromStorage();
+    generateOutput();
 
     function generateOutput(){
         var outputArea = document.querySelector('#output');
         var outputLink = document.querySelector('#outputLink');
-        var embedUrl = document.querySelector('#embedUrl').value;
-        var indented = document.querySelector('#indented').checked;
-        var readonly = document.querySelector('#readonly').checked;
-        var autorun = document.querySelector('#autorun').checked;
+        var iframeArea = document.querySelector('#iframeOnly');
+        var iframePostMsArea = document.querySelector('#iframePlusPostMess');
+        var embedUrl = embedUrlField.value;
+        var indented = indentedChBox.checked;
+        var readonly = readonlyChBox.checked;
+        var autorun = autorunChBox.checked;
         var sassString = inputFlask.getCode();
         var finalUrl = '#';
-        var booleanMaps = {
-            'autorun': autorun,
-            'readonly': readonly,
-            'indented': indented
+        var config = {
+            autorun: autorun,
+            readonly: readonly,
+            indented: indented,
+            sassString: sassString
         }
-        if (embedUrl){
-            var queryString = '';
-            if (sassString && sassString.length > 0){
-                queryString = 'sassString=' + encodeURIComponent(sassString);
-            }
-            for (var key in booleanMaps){
-                if (booleanMaps[key]===true){
-                    queryString += (queryString.length > 0 ? '&' : '') + key + '=' + booleanMaps[key].toString();
-                }
-            }
-            finalUrl = embedUrl + '?' + queryString;
+        saveToStorage();
+        if (embedUrl && embedUrl.length > 0){
+            finalUrl = buildEmbedUrl(embedUrl,config,true);
             outputArea.value = finalUrl;
             outputLink.href = finalUrl;
+            // Build iframe
+            var iframeHtml = '<iframe width="100%" height="300" src="' + finalUrl + '" allowfullscreen="allowfullscreen" frameborder="0"></iframe>';
+            iframeArea.value = iframeHtml;
+            if (sassString.length > 0){
+                // Build iframe + postMessage
+                var stamp = (new Date()).getTime();
+                var id = 'sassEmbed-' + stamp;
+                var vanillaIframeHtml = '<iframe id="' + id +'" width="100%" height="300" src="' + buildEmbedUrl(embedUrl,config,false) + '" allowfullscreen="allowfullscreen" frameborder="0"></iframe>';
+                var postMessagePayload = {
+                    sassString: sassString,
+                    indented: indented
+                }
+                var postMessageCode = '' + 
+                '<script>' +
+                    "document.getElementById('" + id + "').contentWindow.postMessage(JSON.stringify(" + JSON.stringify(postMessagePayload) + "),'*')" +
+                '<\/script>';
+                iframePostMsArea.value = vanillaIframeHtml + '\n' + postMessageCode;
+            }
         }
         else {
+            var codeAppearStr = 'Generated code will appear here...';
             outputArea.value = 'Generated URL will appear here...';
             outputLink.href = '#';
+            iframeArea.value = codeAppearStr;
+            iframePostMsArea.value = codeAppearStr;
             alert('Please enter a valid embed URL');
         }
+    }
+
+    function buildEmbedUrl(baseUrl,config,includeSass){
+        var queryString = '';
+        var booleanMaps = {
+            'autorun': config.autorun,
+            'readonly': config.readonly,
+            'indented': config.indented
+        }
+        var sassString = config.sassString;
+        if (includeSass && sassString && sassString.length > 0){
+            queryString = 'sassString=' + encodeURIComponent(sassString);
+        }
+        for (var key in booleanMaps){
+            if (booleanMaps[key]===true){
+                queryString += (queryString.length > 0 ? '&' : '') + key + '=' + booleanMaps[key].toString();
+            }
+        }
+        return baseUrl + '?' + queryString;
+    }
+
+    function loadConfig(config){
+        indentedChBox.checked = isTrue(config.indented);
+        readonlyChBox.checked = isTrue(config.readonly);
+        autorunChBox.checked = isTrue(config.autorun);
+        if (typeof(config.embedUrl)==='string' && config.embedUrl.length > 0){
+            embedUrlField.value = config.embedUrl;
+        }
+    }
+
+    function isTrue(val){
+        return typeof(val)==='boolean' && val;
+    }
+
+    function restoreFromStorage(){
+        var saved = localStorage.getItem('config');
+        if (saved){
+            try {
+                var config = JSON.parse(saved);
+                loadConfig(config);
+            }
+            catch (e){
+                console.warn('could not parse saved config json');
+            }
+        }
+    }
+    function saveToStorage(){
+        var config = {
+            indented: indentedChBox.checked,
+            readonly: readonlyChBox.checked,
+            autorun: autorunChBox.checked
+        }
+        if (embedUrlField.value.length > 0){
+            config.embedUrl = embedUrlField.value;
+        }
+        localStorage.setItem('config',JSON.stringify(config));
     }
 </script>
 </body>

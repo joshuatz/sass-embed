@@ -217,11 +217,14 @@ function showOutputCss(cssString){
 function getUrlParameter(e, searchStr){e=e.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]");var r=new RegExp("[\\?&]"+e+"=([^&#]*)").exec(searchStr);return null===r?"":decodeURIComponent(r[1].replace(/\+/g," "))}
 
 function removeHeader(){
-    parent.document.querySelector('header').remove();
-    var injectedStyleText = '#tabs,#tabs #result{margin-top:0;height:100vh}';
-    var injectedStyleTag = document.createElement('style');
-    injectedStyleTag.innerText = injectedStyleText;
-    parent.document.body.appendChild(injectedStyleTag);
+    var header = parent.document.querySelector('header');
+    if (header){
+        header.remove();
+        var injectedStyleText = '#tabs,#tabs #result{margin-top:0;height:100vh}';
+        var injectedStyleTag = document.createElement('style');
+        injectedStyleTag.innerText = injectedStyleText;
+        parent.document.body.appendChild(injectedStyleTag);
+    }
 }
 
 function toggleAutoRun(setAutorunOn){
