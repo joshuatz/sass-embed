@@ -10,6 +10,11 @@ Project Writeup and demos: [https://joshuatz.com/projects/web-stuff/sass-embed-d
 
 JSFiddle demo: [link](https://fiddle.jshell.net/joshuatz/n3ce6204/show/light/?sassString=%24myColor%3A%20red%3B%0A.myComponent%20%7B%0A%20%20%20%20button%20%7B%0A%20%20%20%20%20%20%20%20background-color%3A%20%24myColor%3B%0A%20%20%20%20%7D%0A%7D&autorun=true)
 
+## Downside / Warning
+This project relies on [sass.js](https://github.com/medialize/sass.js), which is included as `sass.sync.js`, a 4+ MB JS file. I serve it from a CDN, which should get cached, but it is still a very heavy dependency. And it is resource-intensive when it actually loads and compiles as well.
+
+This is actually probably a big part of the reason why many code playgrounds handle the SASS/SCSS conversion server-side; so they can lift the load off each user and share the benefits of a server implementation of the SASS parser.
+
 ---
 
 ## How to use
@@ -66,6 +71,18 @@ You can easily host sass-embed on your own domain - simply throw the three main 
 Alternatively, you can actually copy the code into a JSFiddle and serve it that way. That is actually why there is a bunch of strange code in my source that checks whether or not it is running in JSFiddle or not.
 
 My JSFiddle hosted embed (subject to change): [https://fiddle.jshell.net/joshuatz/n3ce6204/show/light/](https://fiddle.jshell.net/joshuatz/n3ce6204/show/light/)
+
+---
+## What does this use?
+This tool is largely a lot of powerful tools put together:
+ - [Sass.js](https://github.com/medialize/sass.js)
+     - Handles the Sass/SCSS -> CSS conversion in the browser
+     - See warning at top of readme about resources
+ - [CodeFlask](https://github.com/kazzkiq/CodeFlask) + [Prism](https://prismjs.com/)
+     - For the code editor and language syntax highlighting
+     - Theme is "Okaidia"
+ - [SplitJS](https://github.com/nathancahill/split/tree/master/packages/splitjs)
+     - Splits the view between the input/output panel and allows them to be resized
 
 ----
 
