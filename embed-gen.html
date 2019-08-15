@@ -113,9 +113,10 @@
         });
     });
     restoreFromStorage();
-    generateOutput();
+    generateOutput(true);
 
-    function generateOutput(){
+    function generateOutput(OPT_suppressWarning){
+        var suppressWarning = typeof(OPT_suppressWarning)==='boolean' ? OPT_suppressWarning : false;
         var outputArea = document.querySelector('#output');
         var outputLink = document.querySelector('#outputLink');
         var iframeArea = document.querySelector('#iframeOnly');
@@ -162,7 +163,9 @@
             outputLink.href = '#';
             iframeArea.value = codeAppearStr;
             iframePostMsArea.value = codeAppearStr;
-            alert('Please enter a valid embed URL');
+            if (!suppressWarning){
+                alert('Please enter a valid embed URL');
+            }
         }
     }
 
