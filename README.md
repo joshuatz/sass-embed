@@ -34,7 +34,7 @@ See relevant sections below for more details.
 ### Embed-Gen
 You can use `embed-gen.html` to generate the final embed code. It looks like this:
 
-![Embed Gen Preview](./assets/embed-gen.png)
+![Embed Gen Preview](./assets/Embed-Gen.png)
 
 Simply plug in your options, and where the Sass-Embed files are hosted, and it will generate all the variations of the embed code for you. You can open the file in your browser, or if you want a hosted version, see [this](https://joshuatz.com/static-for-wp-iframes/sass-embed/embed-gen.html).
 
