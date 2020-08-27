@@ -8,7 +8,7 @@ If you just want to show SASS/SCSS side-by-side with CSS, check out the [alterna
 ## Project Write-up and demos
 Project Writeup and demos: [https://joshuatz.com/projects/web-stuff/sass-embed-dynamic-embeddable-sass-scss-to-css-playground](https://joshuatz.com/projects/web-stuff/sass-embed-dynamic-embeddable-sass-scss-to-css-playground)
 
-JSFiddle demo: [link](https://fiddle.jshell.net/joshuatz/n3ce6204/show/light/?sassString=%24myColor%3A%20red%3B%0A.myComponent%20%7B%0A%20%20%20%20button%20%7B%0A%20%20%20%20%20%20%20%20background-color%3A%20%24myColor%3B%0A%20%20%20%20%7D%0A%7D&autorun=true)
+Demo: [link](https://sass-embed.netlify.app/?sassString=%24myColor%3A%20red%3B%0A.myComponent%20%7B%0A%20%20%20%20button%20%7B%0A%20%20%20%20%20%20%20%20background-color%3A%20%24myColor%3B%0A%20%20%20%20%7D%0A%7D&autorun=true)
 
 ## Downside / Warning
 This project relies on [sass.js](https://github.com/medialize/sass.js), which is included as `sass.sync.js`, a 4+ MB JS file. I serve it from a CDN, which should get cached, but it is still a very heavy dependency. And it is resource-intensive when it actually loads and compiles as well.
@@ -70,7 +70,7 @@ You can easily host sass-embed on your own domain - simply throw the three main 
 
 Alternatively, you can actually copy the code into a JSFiddle and serve it that way. That is actually why there is a bunch of strange code in my source that checks whether or not it is running in JSFiddle or not.
 
-My JSFiddle hosted embed (subject to change): [https://fiddle.jshell.net/joshuatz/n3ce6204/show/light/](https://fiddle.jshell.net/joshuatz/n3ce6204/show/light/)
+My JSFiddle hosted embed (subject to change): [https://jsfiddle.net/joshuatz/n3ce6204/](hhttps://jsfiddle.net/joshuatz/n3ce6204/)
 
 ---
 ## What does this use?
